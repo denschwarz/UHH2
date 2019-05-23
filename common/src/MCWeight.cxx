@@ -1000,7 +1000,7 @@ bool MCCSVv2ShapeSystematic::process(Event & event) {
   double shift_cferr1down = pow(weight_cferr1down - weight_central, 2);
   double shift_cferr2down = pow(weight_cferr2down - weight_central, 2);
   double shift_down = sqrt(shift_jesdown+shift_lfdown+shift_hfdown+shift_hfstats1down+shift_hfstats2down+shift_lfstats1down+shift_lfstats2down+shift_cferr1down+shift_cferr2down);
-  double weight_down = weight_central + shift_down;
+  double weight_down = weight_central - shift_down;
 
   event.set(h_weight_csv_central, weight_central);
   event.set(h_weight_csv_jesup, weight_jesup);
