@@ -935,7 +935,7 @@ bool MCCSVv2ShapeSystematic::process(Event & event) {
   float weight_cferr2down = 1.0;
 
   const auto & jets = event.get(h_jets_);
-  for (size_t ijet=0; ijet < 2; ijet++) {
+  for (size_t ijet=0; ijet < jets.size(); ijet++) {
     Jet jet = jets.at(ijet);
     float jet_pt = jet.pt();
     float jet_eta = jet.eta();
@@ -977,6 +977,30 @@ bool MCCSVv2ShapeSystematic::process(Event & event) {
       }
     }
   }
+  // also calculate a total up and down variation
+  double shift_jesup = pow(weight_jesup - weight_central, 2);
+  double shift_lfup = pow(weight_lfup - weight_central, 2);
+  double shift_hfup = pow(weight_hfup - weight_central, 2);
+  double shift_hfstats1up = pow(weight_hfstats1up - weight_central, 2);
+  double shift_hfstats2up = pow(weight_hfstats2up - weight_central, 2);
+  double shift_lfstats1up = pow(weight_lfstats1up - weight_central, 2);
+  double shift_lfstats2up = pow(weight_lfstats2up - weight_central, 2);
+  double shift_cferr1up = pow(weight_cferr1up - weight_central, 2);
+  double shift_cferr2up = pow(weight_cferr2up - weight_central, 2);
+  double shift_up = sqrt(shift_jesup+shift_lfup+shift_hfup+shift_hfstats1up+shift_hfstats2up+shift_lfstats1up+shift_lfstats2up+shift_cferr1up+shift_cferr2up);
+  double weight_up = weight_central + shift_up;
+
+  double shift_jesdown = pow(weight_jesdown - weight_central, 2);
+  double shift_lfdown = pow(weight_lfdown - weight_central, 2);
+  double shift_hfdown = pow(weight_hfdown - weight_central, 2);
+  double shift_hfstats1down = pow(weight_hfstats1down - weight_central, 2);
+  double shift_hfstats2down = pow(weight_hfstats2down - weight_central, 2);
+  double shift_lfstats1down = pow(weight_lfstats1down - weight_central, 2);
+  double shift_lfstats2down = pow(weight_lfstats2down - weight_central, 2);
+  double shift_cferr1down = pow(weight_cferr1down - weight_central, 2);
+  double shift_cferr2down = pow(weight_cferr2down - weight_central, 2);
+  double shift_down = sqrt(shift_jesdown+shift_lfdown+shift_hfdown+shift_hfstats1down+shift_hfstats2down+shift_lfstats1down+shift_lfstats2down+shift_cferr1down+shift_cferr2down);
+  double weight_down = weight_central + shift_down;
 
   event.set(h_weight_csv_central, weight_central);
   event.set(h_weight_csv_jesup, weight_jesup);
@@ -1016,6 +1040,8 @@ bool MCCSVv2ShapeSystematic::process(Event & event) {
   else if (sysType_ == "cferr1down") {event.weight *= weight_cferr1down;}
   else if (sysType_ == "cferr2up") {event.weight *= weight_cferr2up;}
   else if (sysType_ == "cferr2down") {event.weight *= weight_cferr2down;}
+  else if (sysType_ == "up"){event.weight *= weight_up;}
+  else if (sysType_ == "down"){event.weight *= weight_down;}
   else {event.weight *= weight_central;}
 
   return true;
@@ -1108,4 +1134,3 @@ bool TauChargeVariation::process(Event & event){
     }
   return true;
 }
-
